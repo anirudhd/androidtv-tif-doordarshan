@@ -1,4 +1,4 @@
-package com.example.android.tv.doordarshan;
+package me.dewani.doordarshan;
 
 import android.annotation.TargetApi;
 import android.content.Context;

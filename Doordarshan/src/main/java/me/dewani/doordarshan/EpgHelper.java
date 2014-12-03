@@ -1,10 +1,9 @@
-package com.example.android.tv.doordarshan;
+package me.dewani.doordarshan;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
 import android.util.Log;
@@ -13,17 +12,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -60,6 +54,8 @@ public class EpgHelper {
                 Log.d(TAG, "Added:" + channel);
 
                 ArrayList<ContentProviderOperation> contentProviderOperations = new ArrayList<>();
+
+                // create 10 fake programs
                 for (int j = 0; j < 10; j++) {
                     contentProviderOperations.add(ContentProviderOperation
                             .newInsert(TvContract.Programs.CONTENT_URI)
@@ -90,8 +86,9 @@ public class EpgHelper {
         long now = System.currentTimeMillis();
         values.put(TvContract.Programs.COLUMN_TITLE, channel.name);
 
+
         values.put(TvContract.Programs.COLUMN_START_TIME_UTC_MILLIS, now + (j * 30) * 24 * 60 * 60 * 1000);
-        values.put(TvContract.Programs.COLUMN_END_TIME_UTC_MILLIS, now + ((j + 1) * 30) * 24 * 60 * 60 * 1000);
+        values.put(TvContract.Programs.COLUMN_END_TIME_UTC_MILLIS, now + ((j + 1) * 30) * 24 * 60 * 60 * 1000 - 1);
 
         values.put(TvContract.Programs.COLUMN_SHORT_DESCRIPTION, "HLS stream from partner");
         values.put(TvContract.Programs.COLUMN_THUMBNAIL_URI, channel.logoUrl);

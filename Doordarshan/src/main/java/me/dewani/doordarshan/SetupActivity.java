@@ -1,13 +1,11 @@
-package com.example.android.tv.doordarshan;
+package me.dewani.doordarshan;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 
 import android.content.Intent;
-import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
 import android.media.tv.TvInputManager;
 import android.os.AsyncTask;

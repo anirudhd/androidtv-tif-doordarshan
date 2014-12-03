@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.0.2"
 
     defaultConfig {
-        applicationId "com.example.android.tv.doordarshan"
+        applicationId "me.dewani.doordarshan"
         minSdkVersion 21
         targetSdkVersion 21
         versionCode 1

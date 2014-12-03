@@ -1,4 +1,4 @@
-package com.example.android.tv.doordarshan;
+package me.dewani.doordarshan;
 
 
 import android.content.Context;
@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.widget.TextView;
+
+import me.dewani.doordarshan.R;
 
 import com.google.android.exoplayer.MediaCodecTrackRenderer;
 import com.google.android.exoplayer.audio.AudioTrack;

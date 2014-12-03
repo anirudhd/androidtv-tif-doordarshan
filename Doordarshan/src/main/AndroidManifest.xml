@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.tv.doordarshan">
+    package="me.dewani.doordarshan">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,7 +14,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
         <service
-            android:name="com.example.android.tv.doordarshan.DoordarshanService"
+            android:name="me.dewani.doordarshan.DoordarshanService"
             android:permission="android.permission.BIND_TV_INPUT"
             android:process=":input">
             <intent-filter>
@@ -27,10 +27,10 @@
         </service>
 
         <activity
-            android:name="com.example.android.tv.doordarshan.SettingsActivity"
+            android:name="me.dewani.doordarshan.SettingsActivity"
             android:label="@string/title_activity_settings"></activity>
         <activity
-            android:name="com.example.android.tv.doordarshan.SetupActivity"
+            android:name="me.dewani.doordarshan.SetupActivity"
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>

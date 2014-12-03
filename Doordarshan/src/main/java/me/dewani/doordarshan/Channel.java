@@ -1,4 +1,4 @@
-package com.example.android.tv.doordarshan;
+package me.dewani.doordarshan;
 
 import java.util.ArrayList;
 import java.util.List;

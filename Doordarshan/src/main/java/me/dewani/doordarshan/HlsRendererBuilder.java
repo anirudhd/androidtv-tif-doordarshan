@@ -1,4 +1,4 @@
-package com.example.android.tv.doordarshan;
+package me.dewani.doordarshan;
 
 
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
