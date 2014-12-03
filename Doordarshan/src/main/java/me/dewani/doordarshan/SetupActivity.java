@@ -41,13 +41,20 @@ public class SetupActivity extends Activity {
                 .build());
 
         final EditText input = new EditText(this);
+        LinearLayout layout = new LinearLayout(this);
+
         LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         llp.setMargins(50, 50, 50, 50); // llp.setMargins(left, top, right, bottom);
         input.setLayoutParams(llp);
 
+        layout.addView(input);
+
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        // Set an EditText view to get user input
         new AlertDialog.Builder(this)
                 .setTitle("API Token")
-                .setView(input)
+                .setView(layout)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         final Editable token = input.getText();
