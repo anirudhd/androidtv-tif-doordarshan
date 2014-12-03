@@ -21,6 +21,7 @@ import com.google.android.exoplayer.util.ManifestFetcher.ManifestCallback;
 import com.google.android.exoplayer.util.MimeTypes;
 
 import android.media.MediaCodec;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
@@ -67,6 +68,7 @@ public class HlsRendererBuilder implements TvMediaPlayer.RendererBuilder, Manife
         boolean adaptiveDecoder = MediaCodecUtil.getDecoderInfo(MimeTypes.VIDEO_H264, false).adaptive;
         HlsChunkSource chunkSource = new HlsChunkSource(dataSource, url, manifest, bandwidthMeter, null,
                 adaptiveDecoder ? HlsChunkSource.ADAPTIVE_MODE_SPLICE : HlsChunkSource.ADAPTIVE_MODE_NONE);
+        Log.d(TvMediaPlayer.TAG, "adaptive? " + adaptiveDecoder);
         HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, true, 3);
         MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
                 MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT);

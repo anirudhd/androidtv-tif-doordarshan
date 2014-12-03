@@ -45,6 +45,7 @@ public class TvMediaPlayer implements ExoPlayer.Listener, ChunkSampleSource.Even
         MediaCodecAudioTrackRenderer.EventListener, TextTrackRenderer.TextRenderer,
         StreamingDrmSessionManager.EventListener {
 
+    public static final String TAG = "TvMediaPlayer";
     private boolean mPreparing = false;
 
     /**
@@ -321,23 +322,18 @@ public class TvMediaPlayer implements ExoPlayer.Listener, ChunkSampleSource.Even
 
         @Override
         protected void onPreExecute() {
-            Log.d(DoordarshanService.TAG, "onPreExecute: " + surface);
             TvMediaPlayer.this.player.stop();
             TvMediaPlayer.this.seekTo(0);
         }
 
         @Override
         protected void onPostExecute(Void v) {
-
-
-            Log.d(DoordarshanService.TAG, "onPostExecute: " + surface);
             TvMediaPlayer.this.prepare();
         }
     }
 
 
     public void prepare() {
-        Log.d(DoordarshanService.TAG, "prepare: " + surface);
         if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILT) {
             player.stop();
         }
@@ -351,7 +347,7 @@ public class TvMediaPlayer implements ExoPlayer.Listener, ChunkSampleSource.Even
 
     }
 
-    /* package */ void onRenderers(String[][] trackNames,
+    void onRenderers(String[][] trackNames,
                                    MultiTrackChunkSource[] multiTrackSources, TrackRenderer[] renderers) {
         builderCallback = null;
         // Normalize the results.
@@ -380,7 +376,7 @@ public class TvMediaPlayer implements ExoPlayer.Listener, ChunkSampleSource.Even
         pushSurfaceAndVideoTrack(false);
         pushTrackSelection(TYPE_AUDIO, true);
         pushTrackSelection(TYPE_TEXT, true);
-        Log.d(DoordarshanService.TAG, "onRenderers: " + surface);
+        Log.d(TAG, "onRenderers: " + surface);
         setPlayWhenReady(true);
         player.prepare(renderers);
     }
@@ -483,6 +479,7 @@ public class TvMediaPlayer implements ExoPlayer.Listener, ChunkSampleSource.Even
 
     @Override
     public void onBandwidthSample(int elapsedMs, long bytes, long bitrateEstimate) {
+        Log.d(TAG, String.format("onBandwidthSample: elapsed: %s , bytes: %d bitrateEstimate: %d",elapsedMs,bytes, bitrateEstimate));
         if (infoListener != null) {
             infoListener.onBandwidthSample(elapsedMs, bytes, bitrateEstimate);
         }
@@ -647,7 +644,7 @@ public class TvMediaPlayer implements ExoPlayer.Listener, ChunkSampleSource.Even
                 player.setPlayWhenReady(true);
                 break;
             default:
-                Log.e(DoordarshanService.TAG, "Changed to  state: " + playbackState);
+                Log.e(TAG, "Changed to  state: " + playbackState);
         }
     }
 

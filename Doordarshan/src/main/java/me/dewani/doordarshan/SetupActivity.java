@@ -1,16 +1,23 @@
 package me.dewani.doordarshan;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.tv.TvInputInfo;
 import android.media.tv.TvInputManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.Editable;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+
+import static android.widget.LinearLayout.*;
 
 /**
  * Created by anirudhd on 11/24/14.
@@ -33,40 +40,55 @@ public class SetupActivity extends Activity {
                 .penaltyLog()
                 .build());
 
-        new AsyncTask<ContentResolver, Void, Boolean>() {
+        final EditText input = new EditText(this);
+        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        llp.setMargins(50, 50, 50, 50); // llp.setMargins(left, top, right, bottom);
+        input.setLayoutParams(llp);
 
-            public ProgressDialog progressDialog;
+        new AlertDialog.Builder(this)
+                .setTitle("API Token")
+                .setView(input)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        final Editable token = input.getText();
+                        new AsyncTask<ContentResolver, Void, Boolean>() {
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = ProgressDialog.show(SetupActivity.this,
-                        "Setting up channels", "Fetching EPG data from network");
-            }
+                            public ProgressDialog progressDialog;
 
-            @Override
-            protected Boolean doInBackground(ContentResolver... params) {
-                mContentResolver = getContentResolver();
-                mManager = (TvInputManager) getSystemService(Context.TV_INPUT_SERVICE);
-                for (TvInputInfo info : mManager.getTvInputList()) {
-                    if (info.getServiceInfo().name.equals(DoordarshanService.class.getName())) {
-                        EpgHelper.deleteChannels(mContentResolver, info);
-                        EpgHelper.insertChannels(mContentResolver, info);
-                        break;
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                progressDialog = ProgressDialog.show(SetupActivity.this,
+                                        "Setting up channels", "Fetching EPG data from network");
+                            }
+
+                            @Override
+                            protected Boolean doInBackground(ContentResolver... params) {
+                                mContentResolver = getContentResolver();
+                                mManager = (TvInputManager) getSystemService(Context.TV_INPUT_SERVICE);
+                                for (TvInputInfo info : mManager.getTvInputList()) {
+                                    if (info.getServiceInfo().name.equals(DoordarshanService.class.getName())) {
+                                        EpgHelper.deleteChannels(mContentResolver, info);
+                                        EpgHelper.insertChannels(mContentResolver, info, token.toString());
+                                        break;
+                                    }
+                                }
+                                return Boolean.TRUE;
+                            }
+
+                            @Override
+                            public void onPostExecute(Boolean result) {
+                                progressDialog.dismiss();
+                                startService(new Intent(SetupActivity.this, DoordarshanService.class));
+                                setResult(RESULT_OK);
+                                finish();
+                            }
+                        }.execute();
+
                     }
-                }
-                return Boolean.TRUE;
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
             }
-
-            @Override
-            public void onPostExecute(Boolean result) {
-                progressDialog.dismiss();
-                startService(new Intent(SetupActivity.this, DoordarshanService.class));
-                setResult(RESULT_OK);
-                finish();
-            }
-        }.execute();
-
-
+        }).show();
     }
 }

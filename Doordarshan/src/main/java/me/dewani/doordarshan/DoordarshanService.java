@@ -100,7 +100,8 @@ public class DoordarshanService extends TvInputService {
                 Log.d(DoordarshanService.TAG, "Tuning channel");
                 String[] projection = {
                         TvContract.Channels._ID,
-                        TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA
+                        TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA,
+                        TvContract.Channels.COLUMN_DISPLAY_NAME
                 };
 
                 Cursor cursor = mContext.getContentResolver().query(channelUri, projection, null, null, null);
@@ -110,7 +111,8 @@ public class DoordarshanService extends TvInputService {
                             byte[] bytes = cursor.getBlob(cursor.getColumnIndex(TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA));
                             try {
                                 String decoded = new String(bytes, "UTF-8");
-                                Log.d(DoordarshanService.TAG, "Decoded channel:" + decoded);
+                                Log.d(DoordarshanService.TAG, "Tuning channel: " + cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NAME)));
+                                Log.d(DoordarshanService.TAG, "Channel stream: " + decoded);
                                 mPlayer.tuneTo(decoded);
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();

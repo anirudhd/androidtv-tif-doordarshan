@@ -36,13 +36,13 @@ public class EpgHelper {
      * @param resolver
      * @param info
      */
-    public static void insertChannels(ContentResolver resolver, TvInputInfo info) {
+    public static void insertChannels(ContentResolver resolver, TvInputInfo info, String token) {
         if (!info.getServiceInfo().name.equals(DoordarshanService.class.getName())) {
             throw new IllegalArgumentException("info mismatch");
         }
         try {
 
-            List<Channel> channels = getChannels("http://autosample.appspot.com/get");
+            List<Channel> channels = getChannels("http://autosample.appspot.com/get?token=" + token);
             for (int i = 0; i < channels.size(); i++) {
                 ContentValues redValues = new ContentValues();
                 redValues.put(TvContract.Channels.COLUMN_INPUT_ID, info.getId());
