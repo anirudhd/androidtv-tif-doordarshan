@@ -250,7 +250,9 @@ public class DoordarshanService extends TvInputService {
         }
 
         @Override
-        public void onBandwidthSample(int elapsedMs, long bytes, long bitrateEstimate) {
+        public void onBandwidthSample(int elapsedMs, long bytes,long bitrateEstimate) {
+            mStatusView.setText(String.format("elapsed: %s , bytes: %d bitrateEstimate: %d",elapsedMs,bytes, bitrateEstimate));
+
 
         }
 

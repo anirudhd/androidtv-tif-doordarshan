@@ -479,7 +479,6 @@ public class TvMediaPlayer implements ExoPlayer.Listener, ChunkSampleSource.Even
 
     @Override
     public void onBandwidthSample(int elapsedMs, long bytes, long bitrateEstimate) {
-        Log.d(TAG, String.format("onBandwidthSample: elapsed: %s , bytes: %d bitrateEstimate: %d",elapsedMs,bytes, bitrateEstimate));
         if (infoListener != null) {
             infoListener.onBandwidthSample(elapsedMs, bytes, bitrateEstimate);
         }

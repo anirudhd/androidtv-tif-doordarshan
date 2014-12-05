@@ -62,7 +62,7 @@ public class HlsRendererBuilder implements TvMediaPlayer.RendererBuilder, Manife
 
     @Override
     public void onManifest(String contentId, HlsPlaylist manifest) {
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter(player.getMainHandler(), player);
 
         DataSource dataSource = new UriDataSource(userAgent, bandwidthMeter);
         boolean adaptiveDecoder = MediaCodecUtil.getDecoderInfo(MimeTypes.VIDEO_H264, false).adaptive;
