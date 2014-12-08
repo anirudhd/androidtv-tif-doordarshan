@@ -28,7 +28,6 @@ public class SetupActivity extends Activity {
     private ContentResolver mContentResolver;
     private TvInputManager mManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,18 +41,19 @@ public class SetupActivity extends Activity {
 
         final EditText input = new EditText(this);
         LinearLayout layout = new LinearLayout(this);
-
-        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        llp.setMargins(50, 50, 50, 50); // llp.setMargins(left, top, right, bottom);
+        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        llp.setMargins(50, 50, 50, 50);
+        layout.setLayoutParams(llp);
         input.setLayoutParams(llp);
-
+        input.setMinimumWidth(100);
         layout.addView(input);
-
         layout.setOrientation(LinearLayout.VERTICAL);
+
 
         // Set an EditText view to get user input
         new AlertDialog.Builder(this)
                 .setTitle("API Token")
+                .setMessage("Leave blank if you don't know")
                 .setView(layout)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -76,7 +76,7 @@ public class SetupActivity extends Activity {
                                 for (TvInputInfo info : mManager.getTvInputList()) {
                                     if (info.getServiceInfo().name.equals(DoordarshanService.class.getName())) {
                                         EpgHelper.deleteChannels(mContentResolver, info);
-                                        EpgHelper.insertChannels(mContentResolver, info, token.toString());
+                                        EpgHelper.insertChannels(mContentResolver, getApplicationContext(), info, token.toString());
                                         break;
                                     }
                                 }

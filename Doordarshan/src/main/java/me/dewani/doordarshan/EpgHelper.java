@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
 import android.util.Log;
@@ -36,13 +37,13 @@ public class EpgHelper {
      * @param resolver
      * @param info
      */
-    public static void insertChannels(ContentResolver resolver, TvInputInfo info, String token) {
+    public static void insertChannels(ContentResolver resolver, Context context, TvInputInfo info, String token) {
         if (!info.getServiceInfo().name.equals(DoordarshanService.class.getName())) {
             throw new IllegalArgumentException("info mismatch");
         }
         try {
-
-            List<Channel> channels = getChannels("http://autosample.appspot.com/get?token=" + token);
+            Log.d(TAG, "Using: " + (token.isEmpty() ? "local assets" : "network feed"));
+            List<Channel> channels = getChannels(context, "http://autosample.appspot.com/get?token=" + token, token.isEmpty());
             for (int i = 0; i < channels.size(); i++) {
                 ContentValues redValues = new ContentValues();
                 redValues.put(TvContract.Channels.COLUMN_INPUT_ID, info.getId());
@@ -112,16 +113,25 @@ public class EpgHelper {
      * @return
      * @throws JSONException
      */
-    public static List<Channel> getChannels(String channelUrl)
+    public static List<Channel> getChannels(Context context, String channelUrl, boolean local)
             throws JSONException {
         InputStream is = null;
         List<Channel> channels = null;
         try {
-            java.net.URL url = new java.net.URL(channelUrl);
-            URLConnection urlConnection = url.openConnection();
-            is = new BufferedInputStream(urlConnection.getInputStream());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    urlConnection.getInputStream(), "iso-8859-1"), 8);
+            BufferedReader reader = null;
+            if (local) {
+                is = context.getAssets().open("channels.json");
+                reader = new BufferedReader(new InputStreamReader(
+                        is, "iso-8859-1"), 8);
+
+            } else {
+                java.net.URL url = new java.net.URL(channelUrl);
+                URLConnection urlConnection = url.openConnection();
+                is = new BufferedInputStream(urlConnection.getInputStream());
+                reader = new BufferedReader(new InputStreamReader(
+                        is, "iso-8859-1"), 8);
+
+            }
             StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
@@ -132,9 +142,8 @@ public class EpgHelper {
             channels = gson.fromJson(json, new TypeToken<List<Channel>>() {
             }.getType());
 
-
         } catch (Exception e) {
-            Log.d(TAG, "Failed to parse the json for media list", e);
+            Log.d(TAG, "Failed to parse the json for channel list", e);
         } finally {
             if (null != is) {
                 try {

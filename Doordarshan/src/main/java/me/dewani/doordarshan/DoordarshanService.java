@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import me.dewani.doordarshan.R;
 
+import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecTrackRenderer;
 import com.google.android.exoplayer.audio.AudioTrack;
 
@@ -36,7 +37,7 @@ public class DoordarshanService extends TvInputService {
     }
 
     static class StubSessionImpl extends Session implements TvMediaPlayer.Listener, TvMediaPlayer.InternalErrorListener, TvMediaPlayer.InfoListener {
-        private static final int[] COLORS = {Color.RED, Color.GREEN, Color.BLUE};
+
         private final View mOverlayView;
         private final TextView mMessageView;
         private final TextView mStatusView;
@@ -56,11 +57,11 @@ public class DoordarshanService extends TvInputService {
                 mPlayer.addListener(this);
                 mTracks.clear();
             } catch (Exception e) {
-                Log.d(TAG, e.toString());
+                Log.e(TAG, e.toString());
             }
+
+            // Use an overlay view for displaying stream stats
             setOverlayViewEnabled(true);
-
-
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
             mOverlayView = inflater.inflate(R.layout.overlay_view, null);
             mMessageView = (TextView) mOverlayView.findViewById(R.id.message);
@@ -148,6 +149,7 @@ public class DoordarshanService extends TvInputService {
             return true;
         }
 
+        //-----------------------------------Exoplayer events-------------------------------------//
         @Override
         public void onSetCaptionEnabled(boolean enabled) {
         }
@@ -178,7 +180,7 @@ public class DoordarshanService extends TvInputService {
                     .setVideoHeight(height)
                     .build();
             addTrack(track);
-            mStatusView.setText("Video size: " + width + "," + height);
+            Log.d(TAG, "Video size: " + width + "," + height);
 
         }
 
@@ -196,36 +198,35 @@ public class DoordarshanService extends TvInputService {
 
         @Override
         public void onRendererInitializationError(Exception e) {
-            Log.d(TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
 
         @Override
         public void onAudioTrackInitializationError(AudioTrack.InitializationException e) {
-            Log.d(TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
 
         @Override
         public void onDecoderInitializationError(MediaCodecTrackRenderer.DecoderInitializationException e) {
             mStatusView.setText("Exoplayer: " + e.toString());
-
-            Log.d(TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
 
         @Override
         public void onCryptoError(MediaCodec.CryptoException e) {
-            Log.d(TAG, e.toString());
+            Log.e(TAG, e.toString());
 
         }
 
         @Override
         public void onUpstreamError(int sourceId, IOException e) {
-            Log.d(TAG, e.toString());
+            Log.e(TAG, e.toString());
 
         }
 
         @Override
         public void onConsumptionError(int sourceId, IOException e) {
-            Log.d(TAG, e.toString());
+            Log.e(TAG, e.toString());
 
         }
 
@@ -236,7 +237,7 @@ public class DoordarshanService extends TvInputService {
 
         @Override
         public void onVideoFormatEnabled(String formatId, int trigger, int mediaTimeMs) {
-
+            Log.d(TAG, String.format("onVideoFormatEnabled: Format Id %s, Trigger %d, MediaTimeMs %d", formatId, trigger, mediaTimeMs));
         }
 
         @Override
@@ -250,10 +251,10 @@ public class DoordarshanService extends TvInputService {
         }
 
         @Override
-        public void onBandwidthSample(int elapsedMs, long bytes,long bitrateEstimate) {
-            mStatusView.setText(String.format("elapsed: %s , bytes: %d bitrateEstimate: %d",elapsedMs,bytes, bitrateEstimate));
-
-
+        public void onBandwidthSample(int elapsedMs, long bytes, long bitrateEstimate) {
+            if (bitrateEstimate > 0) {
+                mStatusView.setText("BitrateEstimate: " + android.text.format.Formatter.formatShortFileSize(mContext, bytes));
+            }
         }
 
         @Override
