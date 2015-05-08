@@ -9,10 +9,9 @@ import com.google.android.exoplayer.hls.HlsChunkSource;
 import com.google.android.exoplayer.hls.HlsPlaylist;
 import com.google.android.exoplayer.hls.HlsPlaylistParser;
 import com.google.android.exoplayer.hls.HlsSampleSource;
-import com.google.android.exoplayer.metadata.ClosedCaption;
-import com.google.android.exoplayer.metadata.Eia608Parser;
 import com.google.android.exoplayer.metadata.Id3Parser;
 import com.google.android.exoplayer.metadata.MetadataTrackRenderer;
+import com.google.android.exoplayer.text.eia608.Eia608TrackRenderer;
 import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.UriDataSource;
@@ -62,25 +61,22 @@ public class HlsRendererBuilder implements TvMediaPlayer.RendererBuilder, Manife
 
     @Override
     public void onManifest(String contentId, HlsPlaylist manifest) {
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter(player.getMainHandler(), player);
+        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
 
         DataSource dataSource = new UriDataSource(userAgent, bandwidthMeter);
-        boolean adaptiveDecoder = MediaCodecUtil.getDecoderInfo(MimeTypes.VIDEO_H264, false).adaptive;
         HlsChunkSource chunkSource = new HlsChunkSource(dataSource, url, manifest, bandwidthMeter, null,
-                adaptiveDecoder ? HlsChunkSource.ADAPTIVE_MODE_SPLICE : HlsChunkSource.ADAPTIVE_MODE_NONE);
-        Log.d(TvMediaPlayer.TAG, "adaptive? " + adaptiveDecoder);
+                HlsChunkSource.ADAPTIVE_MODE_SPLICE);
         HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, true, 3);
         MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
-                MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+                MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, player.getMainHandler(), player, 50);
         MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
 
         MetadataTrackRenderer<Map<String, Object>> id3Renderer =
                 new MetadataTrackRenderer<Map<String, Object>>(sampleSource, new Id3Parser(),
                         player.getId3MetadataRenderer(), player.getMainHandler().getLooper());
 
-        MetadataTrackRenderer<List<ClosedCaption>> closedCaptionRenderer =
-                new MetadataTrackRenderer<List<ClosedCaption>>(sampleSource, new Eia608Parser(),
-                        player.getClosedCaptionMetadataRenderer(), player.getMainHandler().getLooper());
+        Eia608TrackRenderer closedCaptionRenderer = new Eia608TrackRenderer(sampleSource, player,
+                player.getMainHandler().getLooper());
 
         TrackRenderer[] renderers = new TrackRenderer[TvMediaPlayer.RENDERER_COUNT];
         renderers[TvMediaPlayer.TYPE_VIDEO] = videoRenderer;

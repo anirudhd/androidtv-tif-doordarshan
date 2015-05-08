@@ -93,9 +93,7 @@ public class SetupActivity extends Activity {
                         }.execute();
 
                     }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            }
+
         }).show();
     }
 }

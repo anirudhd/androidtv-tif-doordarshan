@@ -88,10 +88,10 @@ public class EpgHelper {
         values.put(TvContract.Programs.COLUMN_TITLE, channel.name);
 
 
-        values.put(TvContract.Programs.COLUMN_START_TIME_UTC_MILLIS, now + (j * 30) * 24 * 60 * 60 * 1000);
-        values.put(TvContract.Programs.COLUMN_END_TIME_UTC_MILLIS, now + ((j + 1) * 30) * 24 * 60 * 60 * 1000 - 1);
+        values.put(TvContract.Programs.COLUMN_START_TIME_UTC_MILLIS, now +  (j * 60) * 60 * 1000);
+        values.put(TvContract.Programs.COLUMN_END_TIME_UTC_MILLIS, now +  ((j+1) * 60)  * 60 * 1000 - 1);
 
-        values.put(TvContract.Programs.COLUMN_SHORT_DESCRIPTION, "HLS stream from partner");
+        values.put(TvContract.Programs.COLUMN_SHORT_DESCRIPTION, "Game of Thrones : E" + (j +1) );
         values.put(TvContract.Programs.COLUMN_THUMBNAIL_URI, channel.logoUrl);
         Log.d(TAG, channel.name + " " + channel.logoUrl);
         values.put(TvContract.Programs.COLUMN_POSTER_ART_URI, channel.logoUrl);
